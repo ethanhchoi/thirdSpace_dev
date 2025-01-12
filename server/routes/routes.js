@@ -1,17 +1,32 @@
 import express from "express"
+import User from "../products/product.model.js"
+const routes = express.Router();
 
-const router = express.Router();
-
-router.get("/", async (req,res) => {
-    console.log(req);
-    res.send(`I have been received by ${res.status(200).json({success:true,data:{"meep":5}})}`)
+routes.delete("/", async(req,res) => {
+    console.log("Initiated Delete")
 });
 
-router.post("/",createProducts); 
+routes.put("/api", async(req,res) => {
+    console.log("Initiated Add")
+    console.log(req.body);
+});
+routes.get("/", async(req,res) => {
+    console.log("Backend Server!");
+    const products = await User.find({});
+    console.log(products);
+    
+    res.send("HOT");
+})
 
-router.delete("/:id",deleteProduct);
-//Updating all fields = .put() method else use .patch() to update some 
+routes.post("/", async(req,res) => {
+    const product = req.body;
+    console.log(product);
+    const newUser = new User({
+        username:"Hawk Tuah",
+        email:"Cock"
+    })
+    //await newUser.save();
+    res.send("Hello Back!")
 
-router.put("/:id", updateProduct);
-
-export default router;
+})
+export default routes;
