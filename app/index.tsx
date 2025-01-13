@@ -4,6 +4,7 @@ import { useFonts} from 'expo-font';
 import { SplashScreen} from 'expo-router';
 import { useEffect, useState } from 'react';
 import Start_screen from "@/screens/start_screen"
+
 export default function index() {
   const [isReady,setIsReady] = useState(false)//loadedState
   //Need to wait until these fonts load first before the screen loads.

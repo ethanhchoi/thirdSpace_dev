@@ -1,32 +1,15 @@
 import express from "express"
-import User from "../products/product.model.js"
+
+import {deleteProducts, putProducts, getProducts, postProducts, postSettings, getSettings} from "../controllers/controllers.js"
+
 const routes = express.Router();
 
-routes.delete("/", async(req,res) => {
-    console.log("Initiated Delete")
-});
+routes.delete("/", deleteProducts);
 
-routes.put("/api", async(req,res) => {
-    console.log("Initiated Add")
-    console.log(req.body);
-});
-routes.get("/", async(req,res) => {
-    console.log("Backend Server!");
-    const products = await User.find({});
-    console.log(products);
-    
-    res.send("HOT");
-})
+routes.put("/", putProducts);
+routes.get("/", getProducts);
+routes.get("/settings", getSettings);
 
-routes.post("/", async(req,res) => {
-    const product = req.body;
-    console.log(product);
-    const newUser = new User({
-        username:"Hawk Tuah",
-        email:"Cock"
-    })
-    //await newUser.save();
-    res.send("Hello Back!")
-
-})
+routes.post("/", postProducts);
+routes.post("/settings", postSettings);
 export default routes;
