@@ -1,11 +1,12 @@
-import {User,Settings} from "../products/product.model.js"
+import {Settings} from "../products/product.model.js"
 
 //This method is used to Delete Products from the database
-export const deleteProducts = async(req,res) => {
+export const deleteSettings = async(req,res) => {
     try
     {
+        const settings = req.body;
         console.log("Initiated Delete");
-        User.find
+        User.findByIdAndDelete(settings._id);
     }
     catch(error)
     {
@@ -14,7 +15,7 @@ export const deleteProducts = async(req,res) => {
 }
 
 //This method will be used to put and override the user
-export const putProducts = async(req,res) => {
+export const putSettings = async(req,res) => {
     console.log("Initiated Add")
     try
     {
@@ -27,12 +28,12 @@ export const putProducts = async(req,res) => {
     }
 }
 
-export const getProducts = async(req,res) => {
+export const getSettings = async(req,res) => {
     try
     {
         console.log("Backend Server!");
-        const products = await User.find({});
-        console.log(products);
+        const Settings = await User.find({});
+        console.log(Settings);
         
         res.send("HOT");
     }
@@ -40,36 +41,6 @@ export const getProducts = async(req,res) => {
     {
         res.status(404).json({success:false,messsage:`Get Error detected: ${error}`})
     }    
-}
-export const getSettings = async(req,res) => {
-    try
-    {
-        const products = await Settings.find({});
-        console.log(products);
-        
-        res.send("Settings Hot Flamey");
-    }
-    catch(error)
-    {
-        res.status(404).json({success:false,messsage:`Get Error detected: ${error}`})
-    }    
-}
-
-export const postProducts = async(req,res) => {
-    try
-    {
-        const product = req.body;
-        const newUser = new User(product);
-        
-        console.log(product);
-        await newUser.save();
-        res.send("Hello Back!")
-    }
-    catch(error)
-    {
-        res.status(404).json({success:false, messsage:`Post Error detected: ${error}`})
-    }
-
 }
 
 export const postSettings = async(req,res) => {

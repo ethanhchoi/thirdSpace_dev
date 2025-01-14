@@ -10,7 +10,6 @@ export default function index() {
   //Need to wait until these fonts load first before the screen loads.
   //Plus this is used to load in the fonts
   var loggedIn = true;
-
   //Consider using this for a function called loadFunction(); void
   const [loaded,error] = useFonts(
       {
@@ -28,6 +27,7 @@ export default function index() {
       }
     },[loaded,error]);
 
+    
     if(!isReady)
     {
       return (
