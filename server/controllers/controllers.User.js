@@ -1,12 +1,20 @@
 import {User} from "../products/product.model.js"
-
+import mongoose from "mongoose"
 //This method is used to Delete Products from the database
+const ObjectId = mongoose.Types.ObjectId;
 export const deleteProducts = async(req,res) => {
     try
     {
-        const products = req.body;
-        console.log("Initiated Delete");
-        User.findByIdAndDelete(products._id);
+        const {_id} = req.body;
+        console.log(`Initiated Delete of ${_id}`);
+        if(ObjectId.isValid(_id))
+        {
+            console.log("The ID is verified")
+        }
+        //const newUser = await User.find({}).
+        //console.log(newUser);
+        await User.findByIdAndDelete(_id);
+        res.status(200).json({success:true,message:`Successfully deleted ${_id}`});
     }
     catch(error)
     {
@@ -16,15 +24,22 @@ export const deleteProducts = async(req,res) => {
 
 //This method will be used to put and override the user
 export const putProducts = async(req,res) => {
-    console.log("Initiated Add")
+    //const {_id} = req.body;
+    //Pretend {_id made sense}
+    let _id = "67880c889b89850dc44d8f95";
     try
     {
-        console.log("Isuccessful");
-        //findByIdAndUpdate
+        console.log(`Initiated Replacement of ${_id}`);
+        if(ObjectId.isValid(_id))
+        {
+            console.log("The ID is verified")
+        }
+        await User.findByIdAndUpdate(_id,req.body);
+        res.status(200).json({success:true,message:`Successfully updated ${_id}`});
     }
     catch(error)
     {
-        res.status(404).statusMessage("You suck");
+        res.status(404).json({success:false,message:`Failed to delete ${_id} due to: \n ${error}`});
     }
 }
 
@@ -46,10 +61,9 @@ export const getProducts = async(req,res) => {
 export const postProducts = async(req,res) => {
     try
     {
-        const product = req.body;
-        const newUser = new User(product);
+        const newUser = new User(req.body);
         
-        console.log(product);
+        console.log(req.body);
         await newUser.save();
         res.send("Hello Back!")
     }

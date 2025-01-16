@@ -6,7 +6,7 @@ export const deleteChatrooms = async(req,res) => {
     {
         const chatrooms = req.body;
         console.log("Initiated Delete");
-        User.findByIdAndDelete(chatrooms._id);
+        Chatrooms.findByIdAndDelete(chatrooms._id);
     }
     catch(error)
     {

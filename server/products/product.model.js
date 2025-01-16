@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
 
-const ObjectId = mongoose.ObjectId;
+const ObjectId = mongoose.Types.ObjectId;
+const Timestamp = mongoose.Types.ObjectId;
 
 
 const schema_user = new mongoose.Schema({
@@ -10,10 +11,6 @@ const schema_user = new mongoose.Schema({
      },
      isAuth:{
       type:Boolean,
-      required:true
-     },
-     userID:{
-      type:ObjectId,
       required:true
      },
      //We can debate whether we need an email or a phone hnumbe 
@@ -33,23 +30,17 @@ const schema_user = new mongoose.Schema({
          },
          friendStatus:{
             type:String,
-            required:true
+            required:true,
+            enum:["new friend","friend","close friend"]
          }
-         /* Consider Adding these, Not Necessary but we can also just program it ourselves
-         commonFriends:{
-         type:Array,
-         required:true
-         },
-         commonChats:{
-            type:Array,
-            required:true
-         }
-         */
       }],
-     chatroomList:{
-      type:Array,
-      required:true
-     },
+     chatroomList:[//Look to see if this is ok
+      {
+      chatroom_ID:{
+         type:ObjectId,
+         required:true
+      }
+      }],
      college:{
       type:String,
       required:true
@@ -80,25 +71,32 @@ const settings_schema = new mongoose.Schema({
          required:true
       }
    },
-   settings_ID:{
+   settingsID:{
       type:ObjectId,
       required:true
    }
 })
 
 const chatroom_settings = new mongoose.Schema({
-   chatroomID:{
-      type:ObjectId,
-      required:true
-   },
    chatroomName:{
       type:String,
       required:true
    },
-   userCount:{
-      type:Number,
-      required:true
-   },
+   users:[{
+      userID:{
+         type:ObjectId,
+         required:true
+      },
+      dateJoined:{
+         type:Timestamp,
+         required:true
+      },
+      chatStatus:{
+         type:String,
+         required:true,
+         enum:["member","chat leader"]
+      }
+   }],
    userLimit:{
       type:Number,
       required:true
