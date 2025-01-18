@@ -1,7 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import {ScrollView, StyleSheet,Text, View,Button, } from "react-native";
-import {Link, Tabs, useRouter} from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {useRouter} from "expo-router";
 //index.tsx = Home Screen
 
 interface user {
@@ -20,6 +19,7 @@ export default function HScreen() {
   //ScrollView/FlatList Vertical
   return (
       <ScrollView>
+        <StatusBar style = "dark"/>
         <View style={{flex:2, backgroundColor:"blue"}}>
           <Text>HI</Text>
           </View>

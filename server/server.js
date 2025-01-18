@@ -2,7 +2,6 @@ import express from 'express'
 import dotenv from 'dotenv';
 import {connectDB} from "./config/db.js";
 import routes from "./routes/routes.js"
-import axios from "axios"
 
 dotenv.config();
 const app = express();

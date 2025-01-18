@@ -1,5 +1,6 @@
 import mongoose from "mongoose"
 
+
 const ObjectId = mongoose.Types.ObjectId;
 const Timestamp = mongoose.Types.ObjectId;
 
@@ -43,7 +44,8 @@ const schema_user = new mongoose.Schema({
       }],
      college:{
       type:String,
-      required:true
+      required:true,
+      enum:["University at Maryland"]
      }
 })
 const settings_schema = new mongoose.Schema({

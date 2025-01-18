@@ -4,6 +4,7 @@ import { useFonts} from 'expo-font';
 import { SplashScreen} from 'expo-router';
 import { useEffect, useState } from 'react';
 import Start_screen from "@/screens/start_screen"
+import * as loading_screen from "@/screens/(loadingScreens)/loading_screen" 
 
 export default function index() {
   const [isReady,setIsReady] = useState(false)//loadedState
@@ -31,9 +32,9 @@ export default function index() {
     if(!isReady)
     {
       return (
-        <View>
-          <Text>Loading...</Text>
-        </View>
+        <SafeAreaView style = {styles.centerText}>
+          <loading_screen.loading_screen_1/>
+        </SafeAreaView>
       );
     }
     
@@ -43,7 +44,6 @@ export default function index() {
     }
     return (
       <SafeAreaView style = {styles.centerText}>
-        <StatusBar barStyle = "dark-content"/>
         <HScreen/>
       </SafeAreaView>
   )

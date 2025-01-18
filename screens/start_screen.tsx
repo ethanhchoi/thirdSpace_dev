@@ -9,7 +9,7 @@ export default function Start_screen() {
     <SafeAreaView>
         <View>
             <Button title = "Sign In" onPress = {() => {router.push("/sign_in")}}></Button>
-            <Button title = "Sign Out" onPress = {() => {router.push("/sign_out")}}></Button>
+            <Button title = "Sign Up" onPress = {() => {router.push("/sign_up")}}></Button>
         </View>
     </SafeAreaView>
   )
