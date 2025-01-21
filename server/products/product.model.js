@@ -35,9 +35,9 @@ const schema_user = new mongoose.Schema({
             enum:["new friend","friend","close friend"]
          }
       }],
-     chatroomList:[//Look to see if this is ok
+     chatroomList:[
       {
-      chatroom_ID:{
+      chatroom_ID:{//This ID was enforced to Chain Chatroom ID's together
          type:ObjectId,
          required:true
       }
@@ -102,8 +102,7 @@ const chatroom_settings = new mongoose.Schema({
    userLimit:{
       type:Number,
       required:true
-   }
-   ,
+   },
    dateCreated:{
       type:Date,
       required:true
@@ -118,6 +117,10 @@ const chatroom_settings = new mongoose.Schema({
    },
    isOpen:{
       type:Boolean,
+      required:true
+   },
+   listOfMessages:{
+      type:Array,
       required:true
    }
 })
@@ -146,7 +149,6 @@ const event_schema = new mongoose.Schema({
       type:Array,
       required:true
    }
-
 })
 
 const User = mongoose.model('user',schema_user);

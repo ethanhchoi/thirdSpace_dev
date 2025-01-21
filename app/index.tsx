@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View, SafeAreaView, StatusBar} from 'react-native'
+import {StyleSheet, Text, View, SafeAreaView, StatusBar} from 'react-native'
 import HScreen from "../screens/home_screen"
-import { useFonts} from 'expo-font';
-import { SplashScreen} from 'expo-router';
-import { useEffect, useState } from 'react';
+import {useFonts} from 'expo-font';
+import {SplashScreen} from 'expo-router';
+import {useEffect, useState } from 'react';
 import Start_screen from "@/screens/start_screen"
 import * as loading_screen from "@/screens/(loadingScreens)/loading_screen" 
 
@@ -10,7 +10,7 @@ export default function index() {
   const [isReady,setIsReady] = useState(false)//loadedState
   //Need to wait until these fonts load first before the screen loads.
   //Plus this is used to load in the fonts
-  var loggedIn = true;
+  var loggedIn = false;
   //Consider using this for a function called loadFunction(); void
   const [loaded,error] = useFonts(
       {
