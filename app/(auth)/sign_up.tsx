@@ -2,6 +2,7 @@ import { Button, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+//Method will verify no existing user with equal user + valid password
 function verifySignUp(user:string,pass:string)
 {
   

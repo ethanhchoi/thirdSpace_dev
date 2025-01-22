@@ -8,7 +8,7 @@ export const loading_screen_1 = () => {
     </View>
   )
 }
-
+//Can add quotes to these things
 export const loading_screen_2 = () => {
   return (
     <View>
