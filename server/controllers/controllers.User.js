@@ -48,7 +48,7 @@ export const getProducts = async(req,res) => {
     {
         console.log("Requested Get User");
         const products = await User.find({});
-        res.status(200).json({success:true,message:"Successfully received the following products"})
+        res.status(200).json({success:true,message:"Successfully received the following products 1",data:products});
     }
     catch(error)
     {
