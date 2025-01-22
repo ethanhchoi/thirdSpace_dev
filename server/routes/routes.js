@@ -8,10 +8,10 @@ import {deleteChatrooms, putChatrooms, postChatrooms, getChatrooms} from "../con
 const routes = express.Router();
 
 //UserSide
-routes.delete("/", deleteProducts);
-routes.put("/", putProducts);
-routes.get("/", getProducts);
-routes.post("/", postProducts);
+routes.delete("/users", deleteProducts);
+routes.put("/users", putProducts);
+routes.get("/users", getProducts);
+routes.post("/users", postProducts);
 
 routes.get("/settings", getSettings);
 routes.post("/settings", postSettings);

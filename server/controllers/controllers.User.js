@@ -30,9 +30,9 @@ export const putProducts = async(req,res) => {
     try
     {
         console.log(`Initiated Replacement of ${_id}`);
-        if(ObjectId.isValid(_id))
+        if(!ObjectId.isValid(_id))
         {
-            console.log("The ID is verified")
+            console.log("The ID is unverified and does not exist")
         }
         await User.findByIdAndUpdate(_id,req.body);
         res.status(200).json({success:true,message:`Successfully updated ${_id}`});
@@ -46,11 +46,9 @@ export const putProducts = async(req,res) => {
 export const getProducts = async(req,res) => {
     try
     {
-        console.log("Backend Server!");
+        console.log("Requested Get User");
         const products = await User.find({});
-        console.log(products);
-        
-        res.send("HOT");
+        res.status(200).json({success:true,message:"Successfully received the following products"})
     }
     catch(error)
     {
