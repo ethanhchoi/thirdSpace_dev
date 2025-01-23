@@ -18,6 +18,6 @@ app.use(express.urlencoded({ extended: true }));
 connectDB();
 
 app.use("/",routes);
-app.listen(5000,"0.0.0.0", ()=> {
+app.listen(5000,"0.0.0.0:8000", ()=> {
     console.log("Console host started listening at http://localhost:" + PORT);
 });
