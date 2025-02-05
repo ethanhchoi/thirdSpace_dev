@@ -1,11 +1,10 @@
-import {StyleSheet, Text, View, SafeAreaView, StatusBar} from 'react-native'
+import {StyleSheet, Text, View, SafeAreaView, StatusBar, Platform} from 'react-native'
 import HScreen from "../screens/home_screen"
 import {useFonts} from 'expo-font';
 import {SplashScreen} from 'expo-router';
-import {useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import Start_screen from "@/screens/start_screen"
 import * as loading_screen from "@/screens/(loadingScreens)/loading_screen" 
-
 
 
 export default function index() {
