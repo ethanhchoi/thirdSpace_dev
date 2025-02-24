@@ -2,9 +2,11 @@ import { Button, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 //Method will verify no existing user with equal user + valid password
-async function verifySignUp(user:string,pass:string)
+import {createUser} from "@/server_AWS/controller_user"
+async function signUp(user:string,pass:string)
 {
-  
+  console.log(user,pass);
+  console.log(createUser(user,pass));  
 }
 
 export default function sign_up() {
@@ -19,7 +21,7 @@ export default function sign_up() {
       <View style = {styles.sign_up}>
         <Text>Password:</Text><TextInput defaultValue = "" onChangeText={(pass:string)=>{setPass(pass)}}/>
       </View>
-      <Button title = "sign_up_button" onPress = {() => verifySignUp(user,pass)}></Button>
+      <Button title = "sign_up_button" onPress = {() => signUp(user,pass)}></Button>
     </SafeAreaView>
   )
 }
