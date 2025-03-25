@@ -2,7 +2,6 @@
   "name": "thirdspace_dev",
   "main": "expo-router/entry",
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
@@ -19,6 +18,9 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.735.0",
     "@expo/vector-icons": "^14.0.2",
+    "@react-native-firebase/app": "^21.12.0",
+    "@react-native-firebase/auth": "^21.12.0",
+    "@react-native-google-signin/google-signin": "^13.2.0",
     "@react-navigation/bottom-tabs": "^7.0.0",
     "@react-navigation/native": "^7.0.0",
     "axios": "^1.7.9",
@@ -54,6 +56,7 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/jest": "^29.5.12",
+    "@types/node": "^22.13.13",
     "@types/react": "~18.3.12",
     "@types/react-test-renderer": "^18.3.0",
     "dotenv": "^16.4.7",

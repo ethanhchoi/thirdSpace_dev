@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, Button, TextInput} from 'react-native'
 import React, {useState} from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { router } from 'expo-router';
 
 function verifySignIn(username:string,password:string)
 {
@@ -28,9 +29,13 @@ export default function sign_in() {
       </View>
       <Button title = "sign_in_button" onPress = {() => verifySignIn(user,pass)}></Button>
       <Button title = "get_data_from_API_Gateway" onPress = {getFromAPI}></Button>
+      <View>
+        <Button title = "Forgot Password" onPress = {() => {router.push("/forgot_password")}}></Button>
+      </View>
     </SafeAreaView>
   )
-
+//For next time: Figure out a proper route to be able to test the Google Sign In Manual Auth 2.0. If 
+//WE get this to work this should be a very good thing
 }
 
 const styles = StyleSheet.create({

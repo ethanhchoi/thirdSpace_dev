@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 //Method will verify no existing user with equal user + valid password
 import {createUser} from "@/server_AWS/controller_user"
-async function signUp(user:string,pass:string)
+async function signUp(user:string,pass:string[])
 {
   console.log(user,pass);
   console.log(createUser(user,pass));  
