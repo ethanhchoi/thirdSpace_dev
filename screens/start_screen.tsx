@@ -10,7 +10,6 @@ export default function Start_screen() {
             <Button title = "Sign In" onPress = {() => {router.push("/sign_in")}}></Button>
             <Button title = "Sign Up" onPress = {() => {router.push("/sign_up")}}></Button>
             <Button title = "Forgot Password" onPress = {() => {router.push("/forgot_password")}}></Button>
-            <Button title = "Google sign in" onPress = {() => {router.push("/(auth)\test_sign_in_screen")}}></Button>
         </View>
     </SafeAreaView>
   )

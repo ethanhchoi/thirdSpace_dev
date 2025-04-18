@@ -2,55 +2,87 @@
 //Delte User(with inputs)
 //Update user(with Inputs)
 //GetUser(inputs)
-import {v5,validate} from 'uuid'
+import { connect } from 'http2';
+import {v5,v4,validate} from 'uuid'
 //import * as env from "react-native-dotenv"
 //import dotenv from 'dotenv';
 //import Config from "react-native-config"
 //import * from 'react-native-dotenv' 
 
 //dotenv.config()
-async function testFunctions2()
+async function testFunction2()
 {
     let tempVal = 1097895652171076482;
     console.log("testfunction 2 ran")
-    //let tempVal2 = await updateUser(tempVal,"Ben",true,["Balls","Men","Green"],["SFDKJSEFJEWRE","WEFJEWFEJEWR","EWFINEWF"],[])
-    //console.log(tempVal2)
+    let tempVal2 = await updateUser(tempVal,"Ben",true,["Red","Blue","Green"],["SFDKJSEFJEWRE","WEFJEWFEJEWR","EWFINEWF"],[])
+    console.log(tempVal2)
 }
 async function testFunction()
 {
-    let output = await createUser("SigmaBoy",[]);
+    let output = await createUser("TestGoonerChatter",[]);
     console.log(output);
 }
 async function testFunction3()
 {
     //Goal: Test Create a chatroom and see what it looks like on a datasheet
-    let results = await createChatroom("TestChatters",[],5,new Date())
+    let results = await createChatroom("Hawk Tuah",[],5,8)
     console.log(results)
 }
+async function testFunction4()
+{
+    //Goal: Test Create a chatroom and see what it looks like on a datasheet
+    let results = await createEvent("EVENT","TestEvent1","Headache in the ass",false,20,["Running","Gooning","Relaxing","Computer Science"],
+        false,new Date("April 14, 2025 18:24:00"),new Date("April 15, 2025 10:24:00"),["Bombordino Croccodillo","Tim Cheese","John Pork","The Lion"],[38347294],0,5)
+    console.log(results)
+}
+function sleep(ms:number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+async function testFunction5(hostID:string,testerID:string)
+{
+    //Goal: Test Create a message and see what it looks like on a datasheet
+    let server = await connectServer(Number(hostID));
+    let tempMessage = "La-la-la-lava, ch-ch-ch-chicken\nSteve's Lava Chicken, yeah, it's tasty as hell\nOoh, mamacita, now you're ringin' the bell\nCrispy and juicy, now you're havin' a snack\nOoh, super spicy, it's a lava attack"
+    await sleep(5000);
+    console.log("Waiting")
+    let results = await sendMessage(server,tempMessage,hostID,testerID);
+    console.log(results)
+}
+async function testFunction6()
+{
+    //Goal: Test the user connection on a server
+    //connectServer()
+    //console.log(results)
+}
 
-export async function createUser(user:string,tagList:string[]): Promise<boolean> {  
-    let generatedID = genNum(1000000000000000,10999999999999999);
+//USER Section
+export async function createUser(username:string,tagList:string[]): Promise<number> {  
     //Create ID as UUID because of Storage safety. Bytes are cool but not reliable
-    //v5(genID_nameSpace,hidden_UUIDV5) 
-    //Can create a UUID Based on a scrabble value
-    //Encryping a password to send to AWS
-    //Can consider sync contacts if needed/wanted
+    let generatedID = genNum(0,299999999999999999) + 1000000000000000000;
+    //let generatedID = 101;//Tester PreSet Value
     let link = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/user"
     let uuidv5 = '1f6b32ef-25d9-40e0-bf14-230589397922'
+    let statusCode = 200;
     const outData:object = {
         "userType":"USER",
         "productID":generatedID,
-        "user":user,
+        "username":username,
         "isAuth":false,
         "userID":v5(generatedID.toString(),uuidv5),
         "listOfFriends":[],
         "tags":tagList,
-        "chatroomList":[]}
+        "chatroomList":[],
+        "dateCreated":getCurrentDate(),
+        "eventsCreated":0,
+        "chatroomsCreated":0,
+        "connectionID":""
+    }
     let fetchReq:object = {
         method:"POST",
         headers:{'Content-Type': 'application/json'},
         body:JSON.stringify(outData)
     }
+    //Attempts to Fetch the Server for new data
     try
     {
         let req = await fetch(link,fetchReq);
@@ -59,9 +91,67 @@ export async function createUser(user:string,tagList:string[]): Promise<boolean>
     }
     catch(error)
     {
-        console.log("Error detected:",error)
+        //This indicates that there was a problem with the code being fetched
+        console.log("Error detected:",error);
+        statusCode = 404;
     }
-    return true;
+    return statusCode;
+}
+export async function getUser(userID:number)
+{
+   const getUserLink = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/user/";
+   let data = {
+    "userID": userID
+   };
+   console.log(getUserLink)
+   let fetchBody = {
+    method:"GET",
+    headers:{'Content-Type': 'application/json'},
+    body:JSON.stringify(data)
+   }
+   let fetchRes = await fetch(getUserLink,fetchBody)
+   let userData = await fetchRes.json();
+   return userData;
+}
+export async function deleteUser(): Promise<Object>
+{
+   //const getUserLink = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/user/"+String(productID);
+   let contentBody = {
+    "userID":"localStorageIDNumber"
+   }
+   //You know how Apps queue for deletion in 14 days or so
+   //We could try pulling that off in the future
+   let fetchBody = {
+    method:"DELETE",
+    headers:{'Content-Type': 'application/json'},
+    body:contentBody
+   }
+   //let fetchRes = await fetch(getUserLink,fetchBody);
+   //let userData = await fetchRes.json();
+   return fetchBody;
+}
+export async function updateUser(productID:number,user:string,isAuth:boolean,friendList:string[],tagList:string[],chatList:string[]): Promise<Object>
+{  
+    // 
+    //Create ID as UUID because of Storage safety. Bytes are cool but not reliable
+    //
+    const getUserLink = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/user";
+    let outData = {
+        "productID":productID,
+        "user":user,
+        "isAuth":isAuth,
+        "listOfFriends":friendList,
+        "tags":tagList,
+        "chatroomList":chatList
+    };
+    let fetchBody = {
+        method:"PATCH",
+        headers:{'Content-Type': 'application/json'},
+        body: JSON.stringify(outData)
+    };
+    let getData = await fetch(getUserLink,fetchBody);
+    let fetchedData = await getData.json();//<-Investigate what this is
+    return fetchedData//Investigate what this is
 }
 export async function createSettings(userID:number,loadingScreenSettings:string[]): Promise<true>
 {
@@ -90,20 +180,31 @@ export async function createSettings(userID:number,loadingScreenSettings:string[
     return true;
     //return req.status
 }
-export async function createChatroom(chatroomName:string,userList:string[],userLimit:number,dateCreated:Date): Promise<boolean>
+export async function getSettings()
 {
-    let link:string = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/user"
+    
+}
+
+export async function createChatroom(chatroomName:string,userList:string[],userLimit:number,createdChatrooms:number): Promise<boolean>
+{
+    let link:string = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/chatroom"
     let uuidv5:string = '1f6b32ef-25d9-40e0-bf14-230589397922'
-    let chatroom_ID:number = genNum(1200000000000000000,1299999999999999999)
+    let chatroom_ID:number = genNum(500000000000000000, 699999999999999999) + 1000000000000000000
+    if(createdChatrooms>6)
+    {
+        console.log("The chatroom creation per user is full.")
+        console.log("I cant create anymore chatrooms because im too full")
+    }
     let outData:object = {
-        "userType":"USER",
+        "chatType":"CHATROOM",//This makes sense if I want to add any future special rooms
         "productID":chatroom_ID,
         "chatroomName":chatroomName,
-        "chatroom_ID":v5(String(chatroom_ID),uuidv5),
+        "chatroom_ID":v5(String(chatroom_ID),uuidv5),//Uses a concealed UUIDv5 that will be in the Environment Variables
         "userList":userList,
         "userLimit":userLimit,
-        "dateCreated":dateCreated,
-        //"fileName":"" We're going to add this in the Lambda Function to see If this file exists
+        "dateCreated":getCurrentDate(),
+        //Not sure if we're gonna need Messages: "messages":[],
+        "fileName":v4()//We're going to add this in the Lambda Function to see If this file exists
     };
     let fetchReq = {
         method:"POST",
@@ -112,8 +213,10 @@ export async function createChatroom(chatroomName:string,userList:string[],userL
     }
     try
     {
-        const req = await fetch(link,fetchReq)
-        let fetchData = req.json();
+        //Fetch the data from the server
+        let req = await fetch(link,fetchReq)
+        //Convert it into Json() form
+        let fetchData = await req.json()
         console.log(fetchData);
         return true;
     }
@@ -124,24 +227,69 @@ export async function createChatroom(chatroomName:string,userList:string[],userL
     }
 
 }
-//chatroom_settings:{chatroomName,users:{userID,dateJoined,chatStatus}, userLimit, dateCreated, canEnableGroupCall,listOfMessages}
-export async function createEvent(eventTitle:string,description:string,date:TimeRanges,isActive:boolean,
-    maxCapacity:number,tags:string[],inPerson:boolean,listOfUsers:string[]): Promise<boolean>
+export async function getChatroom(chatroom_ID:number): Promise<boolean>
 {
-    let event_ID = genNum(1500000000000000000,1549999999999999999)
+    let link:string = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/chatroom" 
+    return true
+}
+
+//chatroom_settings:{chatroomName,users:{userID,dateJoined,chatStatus}, userLimit, dateCreated, canEnableGroupCall,listOfMessages}
+export async function createEvent(eventType:string,eventTitle:string,description:string,isActive:boolean,
+    maxCapacity:number,tags:string[],inPerson:boolean,startTime:Date,endTime:Date,listOfUsers:string[],
+hostID:number[], eventCount:number,expectedUsers:number): Promise<boolean>
+{   //District number is defined in the front
+    let event_ID = genNum(700000000000000000,899999999999999999) + 1000000000000000000;
+    let link:string = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/events"
+    let uuidv5:string = '1f6b32ef-25d9-40e0-bf14-230589397922'
+    let allocated_time = 7;//7 - 9Days for regular accounts and 14 - 21 for clubs
+    //Check time between startTime/endTime
+    let validEvent = true
+    //If this is greater than a week, or the allocated amount of time
+    let outMessage = {
+        "statusCode":400,
+        "body":""
+    }
+    /*
+    if(getDuration(startTime,endTime,"days") > allocated_time && eventType!="CLUB_EVENT")
+    {
+        
+    }*/
+    if(hostID.length > 3)
+    {
+        //Allow multi user host support but only up to 2.
+        //ClubEvents can have a larger amount. Only large amounts of users who demand a need for more hosts can see in a future update.
+        validEvent = false;
+        outMessage["body"] = "Too many hosts"
+        
+    }
+    /*
+    if(eventCount < 4)
+    {
+        validEvent = false
+    }
+    else
+    {
+        return false;
+    }
+        */
+        //Don't allow users to post if its past this point
     const outData = {
-        "Type":"EVENT",
+        "eventType":eventType,
         "productID":event_ID,
         "eventTitle":eventTitle,
         "desc":description,
-        "date":date,
-        "eventID":v5(String(event_ID),process.env.NAMESPACE!),
+        "startTime":startTime,
+        "endTime":endTime,
+        "eventID":v5(String(event_ID),uuidv5),
         "isActive":isActive,
-        "maxCapacity":maxCapacity,
+        "maxCapacity":maxCapacity, //We can change this to -1 for infinite amount of people
         "tags":tags,
         "inPerson":inPerson,
-        "listOfUsers":listOfUsers
-    }
+        "listOfUsers":listOfUsers, //list of userIDs
+        "hostID":hostID,  //This should be the userID's
+        "eventCount":eventCount+1,//Maybe we can cut this out of necessary?
+        "expectedUsers":expectedUsers //This is a number of expected users that are going to show up to the event
+    };
     let fetchReq = {
         method:"POST",
         headers:{'Content-Type': 'application/json'},
@@ -149,8 +297,9 @@ export async function createEvent(eventTitle:string,description:string,date:Time
     };
     try
     {
-        const req = await fetch(process.env.REQ_LINK!,fetchReq);
-        console.log(req);
+        const req = await fetch(link,fetchReq);
+        let fetchedData = await req.json();
+        console.log(fetchedData);
         return true
     }
     catch(error)
@@ -158,60 +307,32 @@ export async function createEvent(eventTitle:string,description:string,date:Time
         console.log("Error detected:",error)
         return false;
     }
-}
-//All Get User Functions
-export async function getAllUsers()
-{
-   const getUserLink = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/user";
-   let fetchBody = {
-    method:"GET",
-    headers:{'Content-Type': 'application/json'}
-   }
-   let fetchRes = await fetch(getUserLink,fetchBody)
-   let userData = await fetchRes.json();
-   return userData["information"];
-}
-export async function getSpecificUser(productID:number)
-{
-   const getUserLink = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/user/"+String(productID);
-   console.log(getUserLink)
-   let fetchBody = {
-    method:"GET",
-    headers:{'Content-Type': 'application/json'}
-   }
-   let fetchRes = await fetch(getUserLink,fetchBody)
-   let userData = await fetchRes.json();
-   return userData;
-}
-export async function getSettings()
-{
+    //Again this is only temporary since Env variables dont work
     
 }
-function genNum(min:number,max:number)
-{
-    return Math.floor(Math.random() * (max - min)) + min;
-}
-//All Get Chatroom function
-//All Get Messages Function
-export async function getChatroom()
-{
-    
-}
+
 //Server Management: 
-export async function connectServer()
+export async function connectServer(temporaryID:number)
 {
-    const socket = new WebSocket(process.env.SOCKET_LINK!);
+    let link:string = `wss://dzbebozzb9.execute-api.us-east-2.amazonaws.com/production?productID=${temporaryID}&timeJoined=${getCurrentDate()}`;
+    const socket = new WebSocket(link);
+    let message_1 = {"messageContent":"Words I am tired actually"+getCurrentDate()}
+    console.log(socket);
     socket.onopen = () => {
-
+        console.log("This message ran")
+        //socket.send(JSON.stringify({"messageContent":"I have joined the chat","productID":2937201}))
+        console.log("The lion and the Kitten")
+        
+        //socket.send() Should send to a method that can send to Dynamo and send to user
     }
-    socket.onmessage = () => {
-
+    socket.onmessage = (event) => {
+        console.log("Message has been sent:",event)
     }
-    socket.onerror = () => {
-
+    socket.onerror = (e) => {
+        console.log(e)
     }
-    socket.onclose = () => {
-
+    socket.onclose = (e) => {
+        console.log("Closed server")
     }
     socket.addEventListener("open",(event)=>{
         socket.send("User is Active")
@@ -226,50 +347,35 @@ export async function connectServer()
     //2 = Connection in Closing Proccess
     //3 = Connection closed/Couldnt be opened
 
-    if(socket.readyState)
+    /*if(socket.readyState)
     {
         
-    }
+    }*/
+   return socket;
 }
-export async function sendMessage(server:WebSocket,message:string)
+export async function sendMessage(server:WebSocket,message:string, clientID:string, receiverID:string)
 {
-    const maxCapacity = 32000;
-    if(new Blob([message]).size > maxCapacity)
-    {
+    const maxCapacity = 16000;
+    let messageContent = {"clientID":clientID,"receiverID":receiverID,"message":message,"timeSent":getCurrentDate()}
 
+    //Message has Threshold limit of 16kb
+    if(new Blob([message]).size < maxCapacity)
+    {
+        try
+        {
+            server.send(JSON.stringify({"action":"sendPrivate","message":JSON.stringify(messageContent)}));
+        }
+        catch(e)
+        {
+            console.log("Error detected \n",e)
+        }
+        
+    }
+    else
+    {
+        console.log("Hit size limit. Can't send message")
     }
 }
-//Create a 
-//CreateUSer(With Inputs)
-//Delte User(with inputs)
-//Update user(with Inputs)
-//GetUser(inputs)
-
-export async function updateUser(productID:number,user:string,isAuth:boolean,friendList:string[],tagList:string[],chatList:string[]): Promise<Object>
-{  
-    // 
-    //Create ID as UUID because of Storage safety. Bytes are cool but not reliable
-    //
-    const getUserLink = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/user";
-    let outData = {
-        "productID":productID,
-        "user":user,
-        "isAuth":isAuth,
-        "listOfFriends":friendList,
-        "tags":tagList,
-        "chatroomList":chatList
-    };
-    let fetchBody = {
-        method:"PATCH",
-        headers:{'Content-Type': 'application/json'},
-        body: JSON.stringify(outData)
-    };
-    let getData = await fetch(getUserLink,fetchBody);
-    let fetchedData = await getData.json();//<-Investigate what this is
-    return fetchedData//Investigate what this is
-}
-
-
 /*
 export function updateSettings(settingsID,dailyLimit,loadingScreenSettings)
 {  
@@ -296,5 +402,28 @@ export function deleteUser(userID,userName)
     //fetch()
 
 }*/
-
-testFunction3();
+function genNum(min:number,max:number)
+{
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+function getCurrentDate()
+{
+    let createDate = new Date();
+    return String(createDate.getMonth()+1) +"/"+ String(createDate.getDate())+"/"+ String(createDate.getFullYear()) + " " 
+    + createDate.getHours()+":"+createDate.getMinutes()
+}
+function getDuration(startTime:Date,endTime:Date,conversionType:string):number
+{
+    let conversion_table = {"days":8.64e7,"hours":3.6e6,"minutes":6.0e4}
+    let timeBetween:number = (endTime.getTime() - startTime.getTime())
+    if(!(conversionType in conversion_table))
+        return -1
+    return timeBetween/conversion_table[conversionType as keyof typeof conversion_table]
+}
+//testFunction();
+//testFunction3();
+console.log(getCurrentDate())
+//testFunction();
+//connectServer();
+testFunction5("101","1205263312473943000")
+//console.log(getDuration(new Date(),new Date("April 14, 2025 18:24:00"),"minutes"))
