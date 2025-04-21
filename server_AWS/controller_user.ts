@@ -10,6 +10,7 @@ import {v5,v4,validate} from 'uuid'
 //import * from 'react-native-dotenv' 
 
 //dotenv.config()
+import WebSocket from "@react-native-community/websocket";
 async function testFunction2()
 {
     let tempVal = 1097895652171076482;
@@ -42,7 +43,7 @@ async function testFunction5(hostID:string,testerID:string)
 {
     //Goal: Test Create a message and see what it looks like on a datasheet
     let server = await connectServer(Number(hostID));
-    let tempMessage = "La-la-la-lava, ch-ch-ch-chicken\nSteve's Lava Chicken, yeah, it's tasty as hell\nOoh, mamacita, now you're ringin' the bell\nCrispy and juicy, now you're havin' a snack\nOoh, super spicy, it's a lava attack"
+    let tempMessage = "La-la-la-lava, ch-ch-ch-chicken\nSteve's Lava Chicken, yeah, it's tasty as hell\nOoh, mamacita, now you're ringin' the bell\nCrispy and juicy, now you're havin' a snack\nOoh, super spicy, it's a lava attack. Ding!"
     await sleep(5000);
     console.log("Waiting")
     let results = await sendMessage(server,tempMessage,hostID,testerID);
@@ -312,31 +313,24 @@ hostID:number[], eventCount:number,expectedUsers:number): Promise<boolean>
 }
 
 //Server Management: 
-export async function connectServer(temporaryID:number)
+export async function connectServer(temporaryID:number): Promise<WebSocket>
 {
     let link:string = `wss://dzbebozzb9.execute-api.us-east-2.amazonaws.com/production?productID=${temporaryID}&timeJoined=${getCurrentDate()}`;
+    console.log(link)
     const socket = new WebSocket(link);
-    let message_1 = {"messageContent":"Words I am tired actually"+getCurrentDate()}
-    console.log(socket);
     socket.onopen = () => {
-        console.log("This message ran")
-        //socket.send(JSON.stringify({"messageContent":"I have joined the chat","productID":2937201}))
-        console.log("The lion and the Kitten")
-        
-        //socket.send() Should send to a method that can send to Dynamo and send to user
+        console.log("You have successfully connected with the server")
     }
     socket.onmessage = (event) => {
         console.log("Message has been sent:",event)
     }
     socket.onerror = (e) => {
-        console.log(e)
+        console.log("Error Detected: "+e)
     }
     socket.onclose = (e) => {
         console.log("Closed server")
     }
-    socket.addEventListener("open",(event)=>{
-        socket.send("User is Active")
-    })
+
     //if(socket.bufferedAmount() ) If this amount exceeds 32KB Then say you've exceeded Limit.
     //Constantly get Char count when user is done typing when exceeding around the limit of 32kB
     //
@@ -353,27 +347,36 @@ export async function connectServer(temporaryID:number)
     }*/
    return socket;
 }
-export async function sendMessage(server:WebSocket,message:string, clientID:string, receiverID:string)
+export async function sendMessage(server:WebSocket,message:string, clientID:string, receiverID:string): Promise<Object>
 {
     const maxCapacity = 16000;
     let messageContent = {"clientID":clientID,"receiverID":receiverID,"message":message,"timeSent":getCurrentDate()}
-
     //Message has Threshold limit of 16kb
     if(new Blob([message]).size < maxCapacity)
     {
         try
         {
-            server.send(JSON.stringify({"action":"sendPrivate","message":JSON.stringify(messageContent)}));
+            server.send(JSON.stringify({"action":"sendPrivate","message":messageContent}));
+            return{
+                "statusCode":200,
+                "Message":"MessageSent"
+            };
         }
         catch(e)
         {
-            console.log("Error detected \n",e)
+            return{
+                "statusCode":404,
+                "Message":`Message to ${receiverID}\n Error detected \n`+e
+            };
         }
         
     }
     else
     {
-        console.log("Hit size limit. Can't send message")
+        return{
+            "statusCode":404,
+            "Message":"Message exceeded max capacity"
+        };
     }
 }
 /*
@@ -425,5 +428,5 @@ function getDuration(startTime:Date,endTime:Date,conversionType:string):number
 console.log(getCurrentDate())
 //testFunction();
 //connectServer();
-testFunction5("101","1205263312473943000")
+testFunction5("1205263312473943000","101")
 //console.log(getDuration(new Date(),new Date("April 14, 2025 18:24:00"),"minutes"))

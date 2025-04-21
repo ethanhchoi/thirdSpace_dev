@@ -8,12 +8,13 @@ async function signUp(user:string,tags:string[])
   console.log(user,tags);
   //console.log(createUser(user,tags));  
   //We'd connect the 2nd device through to the server
-  console.log(connectServer(1205263312473943000))
 }
 
-export default function sign_up() {
+export default async function sign_up() {
   const [user, setUser] = useState('');
   const [tempID, setID] = useState('');
+  let presetID = 1205263312473943000
+  let startServer = await connectServer(presetID);
   return (
     <SafeAreaView>
       <View style = {styles.sign_up}>
@@ -25,7 +26,7 @@ export default function sign_up() {
         <TextInput defaultValue = "" onChangeText={(user:string)=>{setID(tempID)}}/>
       </View>
       <Button title = "sign_up_button" onPress = {() => signUp(user,["Empty Array"])}></Button>
-      <Button title = "send_message_button" onPress = {() => signUp(user,["Empty Array"])}></Button>
+      <Button title = "send_message_button" onPress = {() => sendMessage(startServer,"Hawkus tuahsa",String(presetID),"101")}></Button>
     </SafeAreaView>
   )
 }
