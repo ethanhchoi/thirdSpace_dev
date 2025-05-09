@@ -1,16 +1,26 @@
-//CreateUSer(With Inputs)
-//Delte User(with inputs)
-//Update user(with Inputs)
-//GetUser(inputs)
-import { connect } from 'http2';
-import {v5,v4,validate} from 'uuid'
+import uuid from 'react-native-uuid'
+//import WebSocket from 'ws';
 //import * as env from "react-native-dotenv"
 //import dotenv from 'dotenv';
 //import Config from "react-native-config"
 //import * from 'react-native-dotenv' 
+/*
+type userSettings =
+{
+    "productID":number,
+    "blockedPeopleList":Set<String>,
+    "loadingScreenSettings":number[],
+}//I can debate on How the loading screen settings even work
+//
+type message = 
+{
+    messageContent:String,
+    timeSent:Date,
+    clientID:number,
+    receiverID:number
+}*/
 
-//dotenv.config()
-import WebSocket from "@react-native-community/websocket";
+
 async function testFunction2()
 {
     let tempVal = 1097895652171076482;
@@ -20,7 +30,7 @@ async function testFunction2()
 }
 async function testFunction()
 {
-    let output = await createUser("TestGoonerChatter",[]);
+    let output = await createUser("Skibidi",[]);
     console.log(output);
 }
 async function testFunction3()
@@ -42,7 +52,7 @@ function sleep(ms:number) {
 async function testFunction5(hostID:string,testerID:string)
 {
     //Goal: Test Create a message and see what it looks like on a datasheet
-    let server = await connectServer(Number(hostID));
+    let server = await connectServer(hostID);
     let tempMessage = "La-la-la-lava, ch-ch-ch-chicken\nSteve's Lava Chicken, yeah, it's tasty as hell\nOoh, mamacita, now you're ringin' the bell\nCrispy and juicy, now you're havin' a snack\nOoh, super spicy, it's a lava attack. Ding!"
     await sleep(5000);
     console.log("Waiting")
@@ -51,44 +61,48 @@ async function testFunction5(hostID:string,testerID:string)
 }
 async function testFunction6()
 {
-    //Goal: Test the user connection on a server
-    //connectServer()
-    //console.log(results)
+    
 }
 
 //USER Section
-export async function createUser(username:string,tagList:string[]): Promise<number> {  
+export async function createUser(username:string,tagList:string[]): Promise<Object> {  
     //Create ID as UUID because of Storage safety. Bytes are cool but not reliable
-    let generatedID = genNum(0,299999999999999999) + 1000000000000000000;
-    //let generatedID = 101;//Tester PreSet Value
+    //let generatedID = genNum(0,29999999999) + 100000000000;
+    //This link will also be hidden and will have permissions set up 
     let link = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/user"
-    let uuidv5 = '1f6b32ef-25d9-40e0-bf14-230589397922'
+    //Changing from V5 -> V4
+    //Takes the Node and trunkates it down to 6 characters of the User's endID
+    //Takes a chunk of the UUID gneeration so Its completely random
+    let generatedID = String(uuid.v4()).split("-")[4].slice(0,8).toUpperCase()
+    
+    //Define success code? actually this should be defined everywhere?
     let statusCode = 200;
     const outData:object = {
         "userType":"USER",
         "productID":generatedID,
         "username":username,
         "isAuth":false,
-        "userID":v5(generatedID.toString(),uuidv5),
         "listOfFriends":[],
         "tags":tagList,
         "chatroomList":[],
         "dateCreated":getCurrentDate(),
         "eventsCreated":0,
         "chatroomsCreated":0,
-        "connectionID":""
+        "connectionID":"offline"
     }
+    //Sets up the Fetch Request
     let fetchReq:object = {
         method:"POST",
         headers:{'Content-Type': 'application/json'},
         body:JSON.stringify(outData)
     }
-    //Attempts to Fetch the Server for new data
+    //Tries to Fetch towards the server
+    let output = "";
     try
     {
         let req = await fetch(link,fetchReq);
-        let fetchData = await req.json();
-        console.log(fetchData);
+        output = await req.json();
+        console.log(output)
     }
     catch(error)
     {
@@ -96,28 +110,44 @@ export async function createUser(username:string,tagList:string[]): Promise<numb
         console.log("Error detected:",error);
         statusCode = 404;
     }
+    //If this is created, then Also Create a user on the Google Cloud/FireBase which ever one we choose
+    /*
+    outPut{
+        statusCode = 404
+    }
+    output[statusCode] == 404 -> Error
+    */
     return statusCode;
 }
-export async function getUser(userID:number)
+export async function getUser(userType:string,userID:string): Promise<Object>
 {
-   const getUserLink = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/user/";
-   let data = {
-    "userID": userID
-   };
-   console.log(getUserLink)
+    //This link will hopefully be hidden when we launch
+   const getUserLink = `https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/user?userType=${userType}&productID=${userID}`;
+   //Initialize the data to send to the server
    let fetchBody = {
     method:"GET",
     headers:{'Content-Type': 'application/json'},
-    body:JSON.stringify(data)
    }
-   let fetchRes = await fetch(getUserLink,fetchBody)
-   let userData = await fetchRes.json();
-   return userData;
+   let output = {}
+   try
+   {
+      let fetchRes = await fetch(getUserLink,fetchBody)
+      let userData = await fetchRes.json();
+      output = userData;
+   }
+   catch(error)
+   {
+      console.log("Error detected",error)
+      return output
+   }
+   console.log(output)
+   return output
 }
 export async function deleteUser(): Promise<Object>
 {
-   //const getUserLink = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/user/"+String(productID);
+   //const getUserLink = f"https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/user/{productID}";
    let contentBody = {
+    "userType":"localUserType",
     "userID":"localStorageIDNumber"
    }
    //You know how Apps queue for deletion in 14 days or so
@@ -133,13 +163,13 @@ export async function deleteUser(): Promise<Object>
 }
 export async function updateUser(productID:number,user:string,isAuth:boolean,friendList:string[],tagList:string[],chatList:string[]): Promise<Object>
 {  
-    // 
+    //Try to make all of these paramaters optional
     //Create ID as UUID because of Storage safety. Bytes are cool but not reliable
     //
     const getUserLink = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/user";
     let outData = {
         "productID":productID,
-        "user":user,
+        "username":user,
         "isAuth":isAuth,
         "listOfFriends":friendList,
         "tags":tagList,
@@ -154,32 +184,19 @@ export async function updateUser(productID:number,user:string,isAuth:boolean,fri
     let fetchedData = await getData.json();//<-Investigate what this is
     return fetchedData//Investigate what this is
 }
-export async function createSettings(userID:number,loadingScreenSettings:string[]): Promise<true>
+export async function createSettings(loadingScreenSettings:string[]): Promise<true>
 {
-    let generatedID = userID + 100000000000000000
-    //We're just shifting the ID settings by 1
-    const outData = {
-        "Type":"SETTINGS",
-        "productID":generatedID,
-        "blockedPeopleList":new Set(),
-        "loadingScreenSettings":loadingScreenSettings};
-    let fetchReq = {
-        method:"POST",
-        headers:{'Content-Type': 'application/json'},
-        body:JSON.stringify(outData)
-    }
-    try
-    {
-        let req = await fetch(process.env.REQ_LINK!,fetchReq);
-        let fetchData = req.json();
-        console.log(fetchData);
-    }
-    catch(error)
-    {
-        console.log("Error detected:",error)
-    }
+    
+    // const outData = {
+    //     "Type":"SETTINGS",
+    //     "blockedPeopleList":new Set(),
+    //     "loadingScreenSettings":loadingScreenSettings};
+    // let fetchReq = {
+    //     method:"POST",
+    //     headers:{'Content-Type': 'application/json'},
+    //     body:JSON.stringify(outData)
+    // }
     return true;
-    //return req.status
 }
 export async function getSettings()
 {
@@ -191,21 +208,25 @@ export async function createChatroom(chatroomName:string,userList:string[],userL
     let link:string = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/chatroom"
     let uuidv5:string = '1f6b32ef-25d9-40e0-bf14-230589397922'
     let chatroom_ID:number = genNum(500000000000000000, 699999999999999999) + 1000000000000000000
+    //Look up how to generate Unique codes
     if(createdChatrooms>6)
     {
         console.log("The chatroom creation per user is full.")
         console.log("I cant create anymore chatrooms because im too full")
     }
-    let outData:object = {
+    else
+    {
+        let chatroom_id = uuid.v4()
+        let outData:object = {
         "chatType":"CHATROOM",//This makes sense if I want to add any future special rooms
         "productID":chatroom_ID,
         "chatroomName":chatroomName,
-        "chatroom_ID":v5(String(chatroom_ID),uuidv5),//Uses a concealed UUIDv5 that will be in the Environment Variables
+        "chatroom_ID":String(chatroom_id),
         "userList":userList,
         "userLimit":userLimit,
         "dateCreated":getCurrentDate(),
         //Not sure if we're gonna need Messages: "messages":[],
-        "fileName":v4()//We're going to add this in the Lambda Function to see If this file exists
+        "fileName":String(chatroom_id)+".txt"//We're going to add this in the Lambda Function to see If this file exists
     };
     let fetchReq = {
         method:"POST",
@@ -225,7 +246,8 @@ export async function createChatroom(chatroomName:string,userList:string[],userL
     {
         console.log("Error detected:",error);
         return false;
-    }
+    }}
+    return true
 
 }
 export async function getChatroom(chatroom_ID:number): Promise<boolean>
@@ -281,7 +303,7 @@ hostID:number[], eventCount:number,expectedUsers:number): Promise<boolean>
         "desc":description,
         "startTime":startTime,
         "endTime":endTime,
-        "eventID":v5(String(event_ID),uuidv5),
+        "eventID":uuid.v4(),
         "isActive":isActive,
         "maxCapacity":maxCapacity, //We can change this to -1 for infinite amount of people
         "tags":tags,
@@ -312,10 +334,10 @@ hostID:number[], eventCount:number,expectedUsers:number): Promise<boolean>
     
 }
 
-//Server Management: 
-export async function connectServer(temporaryID:number): Promise<WebSocket>
+//Connects the user to the server
+export function connectServer(userID:string):WebSocket
 {
-    let link:string = `wss://dzbebozzb9.execute-api.us-east-2.amazonaws.com/production?productID=${temporaryID}&timeJoined=${getCurrentDate()}`;
+    let link:string = `wss://dzbebozzb9.execute-api.us-east-2.amazonaws.com/production?productID=${userID}&timeJoined=${getCurrentDate()}`;
     console.log(link)
     const socket = new WebSocket(link);
     socket.onopen = () => {
@@ -325,7 +347,7 @@ export async function connectServer(temporaryID:number): Promise<WebSocket>
         console.log("Message has been sent:",event)
     }
     socket.onerror = (e) => {
-        console.log("Error Detected: "+e)
+        console.log("Error Detected: "+JSON.stringify(e))
     }
     socket.onclose = (e) => {
         console.log("Closed server")
@@ -333,24 +355,30 @@ export async function connectServer(temporaryID:number): Promise<WebSocket>
 
     //if(socket.bufferedAmount() ) If this amount exceeds 32KB Then say you've exceeded Limit.
     //Constantly get Char count when user is done typing when exceeding around the limit of 32kB
-    //
     //if the user is not connected -> Route out of the server like back to homescreen but gets +1 saved message if user was typing
     //Ready State = Constants in the user's internet status
     //0 = Socket Just created + Connection not yet open
     //1 = Socket Open + Ready to Communicate
     //2 = Connection in Closing Proccess
     //3 = Connection closed/Couldnt be opened
-
-    /*if(socket.readyState)
-    {
-        
-    }*/
+    
    return socket;
 }
-export async function sendMessage(server:WebSocket,message:string, clientID:string, receiverID:string): Promise<Object>
+export async function sendMessage(server:(WebSocket|null),message:string, clientID:string, receiverID:string): Promise<Object>
 {
-    const maxCapacity = 16000;
+    //We could do receiverID? or chatroomID? or count it both as the same thing
+    const maxCapacity = 3200;
+    //Min(of a Max capacity) of a write is 1KB. 
+    //Basically, anything billed as < 1KB counts as 1kB
+    //Do like sendChatroom | sendPrivate
+    //sendMethod:str
+    //Type: Union  "sendChatroom"|"sendPrivate"
+    //sendChatroom should cpature everyone in the chatroom at that time + active and send
     let messageContent = {"clientID":clientID,"receiverID":receiverID,"message":message,"timeSent":getCurrentDate()}
+    if(server==null)
+    {
+        return 0;
+    }
     //Message has Threshold limit of 16kb
     if(new Blob([message]).size < maxCapacity)
     {
@@ -405,11 +433,11 @@ export function deleteUser(userID,userName)
     //fetch()
 
 }*/
-function genNum(min:number,max:number)
+function genNum(min:number,max:number):number
 {
     return Math.floor(Math.random() * (max - min)) + min;
 }
-function getCurrentDate()
+function getCurrentDate():string
 {
     let createDate = new Date();
     return String(createDate.getMonth()+1) +"/"+ String(createDate.getDate())+"/"+ String(createDate.getFullYear()) + " " 
@@ -420,13 +448,11 @@ function getDuration(startTime:Date,endTime:Date,conversionType:string):number
     let conversion_table = {"days":8.64e7,"hours":3.6e6,"minutes":6.0e4}
     let timeBetween:number = (endTime.getTime() - startTime.getTime())
     if(!(conversionType in conversion_table))
-        return -1
+        return -1;
     return timeBetween/conversion_table[conversionType as keyof typeof conversion_table]
 }
 //testFunction();
 //testFunction3();
 console.log(getCurrentDate())
 //testFunction();
-//connectServer();
-testFunction5("1205263312473943000","101")
 //console.log(getDuration(new Date(),new Date("April 14, 2025 18:24:00"),"minutes"))
