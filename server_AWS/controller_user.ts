@@ -1,9 +1,6 @@
 import uuid from 'react-native-uuid'
-//import WebSocket from 'ws';
 //import * as env from "react-native-dotenv"
-//import dotenv from 'dotenv';
 //import Config from "react-native-config"
-//import * from 'react-native-dotenv' 
 /*
 type userSettings =
 {
@@ -20,30 +17,30 @@ type message =
     receiverID:number
 }*/
 
-
 async function testFunction2()
 {
-    let tempVal = 1097895652171076482;
-    console.log("testfunction 2 ran")
-    let tempVal2 = await updateUser(tempVal,"Ben",true,["Red","Blue","Green"],["SFDKJSEFJEWRE","WEFJEWFEJEWR","EWFINEWF"],[])
-    console.log(tempVal2)
+    //Works
+    let tempVal = "E9F128BF";
+    console.log("testfunction 2 ran");
+    let tempVal2 = await updateUser("USER",tempVal,"Gorlock",true,["Bowser","Dad","Father"],["WERIHWRE","ERIERBE","ERIEROER"],[]);
+    console.log(tempVal2);
 }
 async function testFunction()
 {
+    //Works
     let output = await createUser("Skibidi",[]);
+    console.log(output);
+}
+async function testFunction1()
+{
+    let output = await getUser("USER","72437CF2");
     console.log(output);
 }
 async function testFunction3()
 {
+    //Works
     //Goal: Test Create a chatroom and see what it looks like on a datasheet
-    let results = await createChatroom("Hawk Tuah",[],5,8)
-    console.log(results)
-}
-async function testFunction4()
-{
-    //Goal: Test Create a chatroom and see what it looks like on a datasheet
-    let results = await createEvent("EVENT","TestEvent1","Headache in the ass",false,20,["Running","Gooning","Relaxing","Computer Science"],
-        false,new Date("April 14, 2025 18:24:00"),new Date("April 15, 2025 10:24:00"),["Bombordino Croccodillo","Tim Cheese","John Pork","The Lion"],[38347294],0,5)
+    let results = await createChatroom("WEOWEROHWEPOHEWT",["Ethan43443"],5,5)
     console.log(results)
 }
 function sleep(ms:number) {
@@ -61,9 +58,99 @@ async function testFunction5(hostID:string,testerID:string)
 }
 async function testFunction6()
 {
+    //Worked
+    //Deletes user
+    let tempID = "e12e707e-6771-43a0-9c73-00d309017db4";
+    let tempType = "USER";
+    let result = deleteUser(tempType,tempID);
+    console.log(result);
+}
+async function testFucntion7()
+{
+    //Test getting a chatroom
+    let tempID = "486EBE91";
+    let tempType = "CHATROOM";
+    let result = getChatroom(tempType,tempID);
+    console.log(result);
+}
+async function testFunction8()
+{
+    //Test getting a chatroom
+    let tempID = "EFBAA756";
+    let tempType = "CHATROOM";
+    let result = deleteChatroom(tempType,tempID);
+    console.log("Result");console.log(result);
+}
+async function testFunction4()
+{
+    //Goal: Test Create an event and see what it looks like on a datasheet
+    let results = await createEvent("EVENT","TestEvent1","Headache in the ass",false,20,["Running","Gooning","Relaxing","Computer Science"],
+        new Date("April 14, 2025 18:24:00"),new Date("April 15, 2025 10:24:00"),["Bombordino Croccodillo","Tim Cheese","John Pork","The Lion"],["38347294"],0,10,false)
+    console.log(results)
+}
+//Gets an event
+async function testFunction9()
+{
+    let tempID = "D84A87B20C";
+    let tempType = "EVENT";
+    let result = getEvent(tempType,tempID);
+    console.log("Result:");console.log(result);
+}
+//Deletes an event
+async function testFunction10()
+{
+    let tempID = "6f90f4b2ff";
+    let tempType = "EVENT";
+    let result = deleteEvent(tempType,tempID);
+    console.log("Result:");console.log(result);
+}
+async function testFunction11()
+{
+    //Goal: Update a chatroom to match it's parameters it wants to change. 
+    let tempID = "FEE29FAA";
+    let tempType = "CHATROOM";
+    let userID = "";
+    let update_map:Object = {"chatroomName":"PEAAAAK","userLimit":5}
+    let result = updateChatroom(tempType,tempID,userID,update_map);
+    console.log("result\n",result);
+}
+async function testFunction12()
+{
+    //Goal: Allow a user to join a chatroom and make sure the chatroom's limits aren't too big
+    let tempID = "FEE29FAA";
+    let tempType = "CHATROOM";
+    let userID = "EOWJFNW";
+    let result = joinChatroom(tempType,tempID,userID);
+    console.log("result\n",result);
+    
     
 }
-
+async function testFunction13()
+{
+    //Goal: Allow a user to join an event and make sure the event's limits aren't too big
+    
+    
+}
+async function testFunction14()
+{
+    //Goal: Allow a user to leave a chatroom
+    
+}
+async function testFunction15()
+{
+    //Goal: Allow a user to leave an event
+    
+}
+async function testFunction16()
+{
+    //Goal: Allow functional messaging between one user to another
+    
+}
+async function testFunction17()
+{
+    //Goal: 
+    
+}
 //USER Section
 export async function createUser(username:string,tagList:string[]): Promise<Object> {  
     //Create ID as UUID because of Storage safety. Bytes are cool but not reliable
@@ -74,7 +161,6 @@ export async function createUser(username:string,tagList:string[]): Promise<Obje
     //Takes the Node and trunkates it down to 6 characters of the User's endID
     //Takes a chunk of the UUID gneeration so Its completely random
     let generatedID = String(uuid.v4()).split("-")[4].slice(0,8).toUpperCase()
-    
     //Define success code? actually this should be defined everywhere?
     let statusCode = 200;
     const outData:object = {
@@ -126,7 +212,7 @@ export async function getUser(userType:string,userID:string): Promise<Object>
    //Initialize the data to send to the server
    let fetchBody = {
     method:"GET",
-    headers:{'Content-Type': 'application/json'},
+    headers:{'Content-Type': 'application/json'}
    }
    let output = {}
    try
@@ -143,31 +229,45 @@ export async function getUser(userType:string,userID:string): Promise<Object>
    console.log(output)
    return output
 }
-export async function deleteUser(): Promise<Object>
+export async function deleteUser(userType:string,productID:string): Promise<Object>
 {
-   //const getUserLink = f"https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/user/{productID}";
+   const getUserLink = `https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/user`;///${productID}`;
    let contentBody = {
-    "userType":"localUserType",
-    "userID":"localStorageIDNumber"
+    "userType":userType,//"localUserType":
+    "productID":productID//"localStorageIDNumber"
    }
+   let output = "";
    //You know how Apps queue for deletion in 14 days or so
    //We could try pulling that off in the future
    let fetchBody = {
     method:"DELETE",
     headers:{'Content-Type': 'application/json'},
-    body:contentBody
+    body:JSON.stringify(contentBody)
    }
-   //let fetchRes = await fetch(getUserLink,fetchBody);
-   //let userData = await fetchRes.json();
+
+   try
+   {
+    let fetchRes = await fetch(getUserLink,fetchBody);
+    let userData = await fetchRes.json();
+    output = userData;
+   }
+   catch(error)
+   {
+    console.log(error)
+   }
+   console.log(output);
    return fetchBody;
 }
-export async function updateUser(productID:number,user:string,isAuth:boolean,friendList:string[],tagList:string[],chatList:string[]): Promise<Object>
+export async function updateUser(userType:string,productID:string,user:string,isAuth:boolean,friendList:string[],tagList:string[],chatList:string[]): Promise<Object>
 {  
+    //Add userType when I come back
     //Try to make all of these paramaters optional
     //Create ID as UUID because of Storage safety. Bytes are cool but not reliable
     //
+    //If it exists, then add it to the dictionary
     const getUserLink = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/user";
     let outData = {
+        "userType":userType,
         "productID":productID,
         "username":user,
         "isAuth":isAuth,
@@ -206,27 +306,26 @@ export async function getSettings()
 export async function createChatroom(chatroomName:string,userList:string[],userLimit:number,createdChatrooms:number): Promise<boolean>
 {
     let link:string = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/chatroom"
-    let uuidv5:string = '1f6b32ef-25d9-40e0-bf14-230589397922'
-    let chatroom_ID:number = genNum(500000000000000000, 699999999999999999) + 1000000000000000000
     //Look up how to generate Unique codes
-    if(createdChatrooms>6)
+    let setUserLimit:number = 6;
+    if(createdChatrooms>setUserLimit)
     {
+        //This indicates too many people per room max = 6
         console.log("The chatroom creation per user is full.")
         console.log("I cant create anymore chatrooms because im too full")
     }
     else
     {
-        let chatroom_id = uuid.v4()
+        let gen_id = uuid.v4()
+        let chatroom_id = String(gen_id.slice(1,5) + gen_id.slice(19,23)).toUpperCase()
         let outData:object = {
         "chatType":"CHATROOM",//This makes sense if I want to add any future special rooms
-        "productID":chatroom_ID,
+        "productID":chatroom_id,//This will just be called chatroom_ID
         "chatroomName":chatroomName,
-        "chatroom_ID":String(chatroom_id),
         "userList":userList,
         "userLimit":userLimit,
         "dateCreated":getCurrentDate(),
-        //Not sure if we're gonna need Messages: "messages":[],
-        "fileName":String(chatroom_id)+".txt"//We're going to add this in the Lambda Function to see If this file exists
+        //Redundant -> "fileName":chatroom_id//We're going to add this in the Lambda Function to see If this file exists
     };
     let fetchReq = {
         method:"POST",
@@ -240,7 +339,6 @@ export async function createChatroom(chatroomName:string,userList:string[],userL
         //Convert it into Json() form
         let fetchData = await req.json()
         console.log(fetchData);
-        return true;
     }
     catch(error)
     {
@@ -248,43 +346,143 @@ export async function createChatroom(chatroomName:string,userList:string[],userL
         return false;
     }}
     return true
-
 }
-export async function getChatroom(chatroom_ID:number): Promise<boolean>
+export async function getChatroom(chatType:string,chatroom_ID:string): Promise<boolean>
 {
-    let link:string = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/chatroom" 
+    let link:string = `https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/chatroom?chatType=${chatType}&productID=${chatroom_ID}`;
+    let fetchReq = {
+        method:"GET",
+        headers:{'Content-Type': 'application/json'}
+    }
+    try
+    {
+        let req = await fetch(link,fetchReq);
+        let output = await req.json();
+        console.log(output);
+    }
+    catch(e)
+    {
+        console.log(e);
+    }
     return true
 }
+export async function joinChatroom(chatType:string,chatroom_ID:string,userID:string): Promise<boolean>
+{
+    let link:string = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/chatroom";
+    const body = {
+        "chatType":chatType,
+        "productID":chatroom_ID,
+        "userID":userID//This should be the local UserID
+    }
+    /*
+    if(localAmountOfRoomsJoined > chatroomLimit)
+    {
+        return "Exceeded the chatroom number limit"
+    }*/
+    let fetch_req = {
+        method:"PATCH",//Not sure what to name this
+        headers:{'Content-Type': 'application/json'},
+        body:JSON.stringify(body)
+    }
+    try
+    {
+        let req = await fetch(link,fetch_req);
+        let output = await req.json();
+        console.log(output);
+    }
+    catch(e)
+    {
+        console.log(e);
+    }
+    return true;
+}
+export async function deleteChatroom(chatType:string,chatroom_ID:string): Promise<boolean>
+{
+    //chatType = Chatroom type
+    //chatroom_ID = The chatroom we want to delete
+    //The filename can serve as a confirmation that only the host will have in order to delete the room
+    let link:string = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/chatroom";
+    const body = {
+        "chatType":chatType,
+        "productID":chatroom_ID
+    }
+    let fetchBody = {
+        method:"DELETE",
+        headers:{'Content-Type': 'application/json'},
+        body:JSON.stringify(body)
+    }
+    try
+    {
+        let req = await fetch(link,fetchBody);
+        let output = await req.json();
+        console.log(output);
+    }
+    catch(e)
+    {
+        console.log(e);
+    }
+    return true;
+}
+export async function updateChatroom(chatType:string,chatroom_ID:string,userID:string,update_map:Object)
+{
+    //Iniitate the body
+    let output = {"status":200,"body":""};
+    //Check if update_map has content
+    if(Object.keys(update_map).length >= 0)
+    {
+        let link = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/chatroom";;
+        let body = {
+            "chatType":chatType,
+            "productID":chatroom_ID,
+            "update_map":update_map
+        }
+        let fetchBody = {
+            method:"PUT",
+            headers:{'Content-Type': 'application/json'},
+            body:JSON.stringify(body)
+        }
+        //Does this user have permission to edit and update the chatroom
+        //if userID == chatroom_ID.host() -> then let the code run
+        try
+        {
+            let req = await fetch(link,fetchBody);
+            let output = await req.json();
+            console.log(output);
+        }
+        catch(e)
+        {
+            console.log("Error detected",e);
+        }
+    }
+    else
+    {
+        output["status"] = 456;//Squid Game reference
+        output["body"] = "Did not pass anything into the update_method";
 
+    }
+}
 //chatroom_settings:{chatroomName,users:{userID,dateJoined,chatStatus}, userLimit, dateCreated, canEnableGroupCall,listOfMessages}
 export async function createEvent(eventType:string,eventTitle:string,description:string,isActive:boolean,
-    maxCapacity:number,tags:string[],inPerson:boolean,startTime:Date,endTime:Date,listOfUsers:string[],
-hostID:number[], eventCount:number,expectedUsers:number): Promise<boolean>
+    maxCapacity:number,tags:string[],startTime:Date,endTime:Date,listOfUsers:string[],
+hostID:string[], eventCount:number,expectedUsers:number,inPerson:boolean): Promise<boolean>
 {   //District number is defined in the front
-    let event_ID = genNum(700000000000000000,899999999999999999) + 1000000000000000000;
+    const userTypeEventLimit = {"USER":7,"CLUB":14}
     let link:string = "https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/events"
-    let uuidv5:string = '1f6b32ef-25d9-40e0-bf14-230589397922'
     let allocated_time = 7;//7 - 9Days for regular accounts and 14 - 21 for clubs
+    //hostID is passed in as a localStorage
     //Check time between startTime/endTime
     let validEvent = true
-    //If this is greater than a week, or the allocated amount of time
     let outMessage = {
-        "statusCode":400,
+        "statusCode":200,
         "body":""
     }
+    //If this is greater than a week, or the allocated amount of time
     /*
     if(getDuration(startTime,endTime,"days") > allocated_time && eventType!="CLUB_EVENT")
     {
         
     }*/
-    if(hostID.length > 3)
-    {
-        //Allow multi user host support but only up to 2.
-        //ClubEvents can have a larger amount. Only large amounts of users who demand a need for more hosts can see in a future update.
-        validEvent = false;
-        outMessage["body"] = "Too many hosts"
-        
-    }
+   
     /*
     if(eventCount < 4)
     {
@@ -294,24 +492,32 @@ hostID:number[], eventCount:number,expectedUsers:number): Promise<boolean>
     {
         return false;
     }
-        */
-        //Don't allow users to post if its past this point
+    */
+    //We will run the ideas of an event count limit per user and a duration Limit through Annie and see what she thinks
+    /*
+    if(hostID.length > 3)
+    {
+        //Allow multi user host support but only up to 2.
+        //ClubEvents can have a larger amount. Only large amounts of users who demand a need for more hosts can see in a future update.
+        validEvent = false;
+        outMessage["body"] = "Too many hosts"
+        //RUN IDEA: edit Description/Title or anything
+    }*/
+    let eventID = String(uuid.v4()).toUpperCase();
     const outData = {
         "eventType":eventType,
-        "productID":event_ID,
-        "eventTitle":eventTitle,
+        "productID":eventID.slice(2,8) + eventID.slice(9,11),//hidden values generated of an ID
+        "eventTitle":eventTitle,//Title of Event
         "desc":description,
         "startTime":startTime,
         "endTime":endTime,
-        "eventID":uuid.v4(),
-        "isActive":isActive,
-        "maxCapacity":maxCapacity, //We can change this to -1 for infinite amount of people
+        "isActive":isActive,//the event is considered to be active or cancelled?
+        "maxCapacity":maxCapacity,//The max capacity of an event
         "tags":tags,
-        "inPerson":inPerson,
+        //RUN IDEA: "inPerson":inPerson,
         "listOfUsers":listOfUsers, //list of userIDs
-        "hostID":hostID,  //This should be the userID's
-        "eventCount":eventCount+1,//Maybe we can cut this out of necessary?
-        "expectedUsers":expectedUsers //This is a number of expected users that are going to show up to the event
+        "hostID":hostID  //This should be the userID's
+        //RUN IDEA: Run this idea by annie as well"etxpecedUsers":expectedUsers //This is a number of expected users that are going to show up to the event
     };
     let fetchReq = {
         method:"POST",
@@ -333,7 +539,92 @@ hostID:number[], eventCount:number,expectedUsers:number): Promise<boolean>
     //Again this is only temporary since Env variables dont work
     
 }
+export async function getEvent(eventType:string,eventID:string)
+{
+    let link:string = `https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/events?eventType=${eventType}&productID=${eventID}`
+    let fetchReq = {
+        method:"GET",
+        headers:{'Content-Type': 'application/json'}
+    }
+    try
+    {
+        const req = await fetch(link,fetchReq);
+        let fetchedData = await req.json();
+        console.log("Event Content");
+        console.log(fetchedData);
+        return true;
+    }
+    catch(error)
+    {
+        console.log("Error detected:",error)
+        return false;
+    }
+}
+export async function deleteEvent(eventType:string,eventID:string)
+{
+    let link:string = `https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/events`
+    let body = {
+        "eventType":eventType,
+        "productID":eventID
+    }
+    let fetchReq = {
+        method:"DELETE",
+        headers:{'Content-Type': 'application/json'},
+        body:JSON.stringify(body)
+    }
+    try
+    {
+        const req = await fetch(link,fetchReq);
+        let fetchedData = await req.json();
+        console.log(fetchedData);
+        return true;
+    }
+    catch(error)
+    {
+        console.log("Error detected",error);
+        return false;
+    }
+}
+export async function updateEvent(eventType:string,eventID:string)
+{
+    let link:string = `https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/events`;
+    let body = {
+        eventType:'eventType',
+        eventID:'eventID'
+    }
+    let fetchReq = {
+        method:"PUT",
+        headers:{'Content-Type': 'application/json'},
+        body:JSON.stringify(body)
+    }
 
+}
+export async function joinEvent(eventType:string,eventID:string,userID:string)
+{
+    //eventType = type of Event
+    let link:string = `https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/events`;
+    let body = {
+        "eventType":eventType,
+        "productID":eventID,
+        "userID":userID
+    }
+    let fetchReq = {
+        method:"PATCH",
+        headers:{'Content-Type': 'application/json'},
+        body:JSON.stringify(body)
+    }
+    try
+    {
+        let req = await fetch(link,fetchReq);
+        let result = req.json();
+        console.log(result);
+    }
+    catch(error)
+    {
+        console.log("Error detected",error);
+        return false;
+    }
+}
 //Connects the user to the server
 export function connectServer(userID:string):WebSocket
 {
@@ -424,15 +715,7 @@ export function updateSettings(settingsID,dailyLimit,loadingScreenSettings)
         "chatroomList":chatList}
     return outData
 }
-
-export function deleteUser(userID,userName)
-{
-    let fetch_req = {
-        
-    }
-    //fetch()
-
-}*/
+*/
 function genNum(min:number,max:number):number
 {
     return Math.floor(Math.random() * (max - min)) + min;
@@ -440,9 +723,10 @@ function genNum(min:number,max:number):number
 function getCurrentDate():string
 {
     let createDate = new Date();
-    return String(createDate.getMonth()+1) +"/"+ String(createDate.getDate())+"/"+ String(createDate.getFullYear()) + " " 
-    + createDate.getHours()+":"+createDate.getMinutes()
+    return createDate.toLocaleString("en-US");//String(createDate.getMonth()+1) +"/"+ String(createDate.getDate())+"/"+ String(createDate.getFullYear()) + " " 
+    //+ createDate.getHours()+":"+createDate.getMinutes()
 }
+//Timer variable
 function getDuration(startTime:Date,endTime:Date,conversionType:string):number
 {
     let conversion_table = {"days":8.64e7,"hours":3.6e6,"minutes":6.0e4}
@@ -451,8 +735,8 @@ function getDuration(startTime:Date,endTime:Date,conversionType:string):number
         return -1;
     return timeBetween/conversion_table[conversionType as keyof typeof conversion_table]
 }
-//testFunction();
-//testFunction3();
 console.log(getCurrentDate())
-//testFunction();
+//testFunction3();
+//testFunction10();
+testFunction12();
 //console.log(getDuration(new Date(),new Date("April 14, 2025 18:24:00"),"minutes"))
