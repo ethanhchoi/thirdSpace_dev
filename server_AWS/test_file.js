@@ -14,4 +14,3 @@ async function testFunctions2()
     console.log("testfunction 2 ran")
     console.log(testMethod.updateUser(tempVal,"Ben",true,["Balls","Men","Green"],["SFDKJSEFJEWRE","WEFJEWFEJEWR","EWFINEWF"],[]))
 }
-testFunction()
