@@ -40,7 +40,7 @@ async function testFunction3()
 {
     //Works
     //Goal: Test Create a chatroom and see what it looks like on a datasheet
-    let results = await createChatroom("WEOWEROHWEPOHEWT",["Ethan43443"],5,5)
+    let results = await createChatroom("POINIYBOHOU",["Ethan43443"],5,5)
     console.log(results)
 }
 function sleep(ms:number) {
@@ -107,17 +107,17 @@ async function testFunction10()
 async function testFunction11()
 {
     //Goal: Update a chatroom to match it's parameters it wants to change. 
-    let tempID = "FEE29FAA";
+    let tempID = "945582DA";
     let tempType = "CHATROOM";
     let userID = "";
-    let update_map:Object = {"chatroomName":"PEAAAAK","userLimit":5}
+    let update_map:Object = {"chatroomName":"BallsStickyWoot","userLimit":6}
     let result = updateChatroom(tempType,tempID,userID,update_map);
     console.log("result\n",result);
 }
 async function testFunction12()
 {
     //Goal: Allow a user to join a chatroom and make sure the chatroom's limits aren't too big
-    let tempID = "FEE29FAA";
+    let tempID = "945582DA";
     let tempType = "CHATROOM";
     let userID = "EOWJFNW";
     let result = joinChatroom(tempType,tempID,userID);
@@ -585,7 +585,7 @@ export async function deleteEvent(eventType:string,eventID:string)
         return false;
     }
 }
-export async function updateEvent(eventType:string,eventID:string)
+export async function updateEvent(eventType:string,eventID:string,eventInfo:string[])
 {
     let link:string = `https://dk9j000yia.execute-api.us-east-2.amazonaws.com/prod/events`;
     let body = {
@@ -736,7 +736,6 @@ function getDuration(startTime:Date,endTime:Date,conversionType:string):number
     return timeBetween/conversion_table[conversionType as keyof typeof conversion_table]
 }
 console.log(getCurrentDate())
-//testFunction3();
-//testFunction10();
 testFunction12();
+//testFunction12();
 //console.log(getDuration(new Date(),new Date("April 14, 2025 18:24:00"),"minutes"))
